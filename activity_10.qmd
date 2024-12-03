@@ -1,0 +1,207 @@
+---
+title: "Tortilla Price Analysis"
+subtitle: "An Exploration of Trends in Tortilla Prices"
+author: "Jinman Zhang"
+date: "nov 20, 2024"
+format: html
+self-contained: true
+---
+
+### A pic of cortilla: 
+
+(Question 1, 2, 3 are under this picture, please scroll down)
+
+![](images/Screenshot 2024-11-20 at 9.49.03 PM-01.png)
+
+<https://www.lionsbread.com/easy-homemade-flour-tortillas/>
+
+## **Question 1**
+
+```{r, echo=FALSE}
+# Set CRAN mirror
+options(repos = c(CRAN = "https://cran.rstudio.com/"))
+
+# Install and load ggplot2
+if (!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+
+```
+
+```{r, echo=FALSE}
+library(dplyr)
+library(ggplot2)
+myFunction <- function(x){
+  y <- (cos(4*x) + tan(0.5*x))^4
+  return(y)
+}
+
+ggplot() +
+  stat_function(
+    fun = myFunction,
+    xlim = c(0, 1),
+    n = 1000
+  ) +
+  theme_bw() +
+  labs(
+    x = "x",
+    y = "h(x)"
+  )
+
+```
+
+## **Question 2**
+
+```{r, echo=TRUE, include=TRUE}
+library(dplyr)
+
+# Load the ggplot2 library
+install.packages("ggplot2")
+
+library(ggplot2)
+
+# Create a scatter plot of mpg vs wt
+ggplot(data = mtcars, aes(x = wt, y = mpg)) +
+  geom_point(color = "blue", size = 3) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  theme_minimal() +
+  labs(title = "Relationship between Weight and Miles per Gallon",
+       x = "Weight (1000 lbs)",
+       y = "Miles per Gallon (mpg)")
+
+```
+
+## **Question 3**
+
+a\)
+
+b\)
+
+c\)
+
+```{r}
+# Load required libraries
+library(dplyr)
+library(ggplot2)
+
+# Step 1: Check if the file exists
+file_path <- "/Users/jinman/Desktop/STAT300HHWW/tortilla_data.csv"
+if (!file.exists(file_path)) {
+  stop("File does not exist at the specified path.")
+}
+
+# Step 2: Load the dataset
+data <- read.csv(file_path)
+
+# Step 3: Filter data for 2007 and 2024
+data_2007 <- data %>% filter(year == 2007)
+data_2024 <- data %>% filter(year == 2024)
+
+# Step 4: Calculate average prices
+avg_price_2007 <- data_2007 %>% summarise(avg_price = mean(price, na.rm = TRUE))
+avg_price_2024 <- data_2024 %>% summarise(avg_price = mean(price, na.rm = TRUE))
+
+# Step 5: Print results
+print(paste("Average price in 2007:", round(avg_price_2007$avg_price, 2)))
+print(paste("Average price in 2024:", round(avg_price_2024$avg_price, 2)))
+
+# Step 6: Calculate percent change
+percent_change <- ((avg_price_2024$avg_price - avg_price_2007$avg_price) / avg_price_2007$avg_price) * 100
+print(paste("Percent change from 2007 to 2024:", round(percent_change, 2), "%"))
+
+
+
+```
+
+d\)
+
+```{r}
+library(dplyr)
+
+# Group data by year and calculate average price
+avg_price_by_year <- data %>%
+  filter(year >= 2007 & year <= 2024) %>%
+  group_by(year) %>%
+  summarise(avg_price = mean(price, na.rm = TRUE))
+
+# Plot the trend
+ggplot(avg_price_by_year, aes(x = year, y = avg_price)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 2) +
+  theme_minimal() +
+  labs(title = "Average Price of Tortillas (2007–2024)",
+       x = "Year",
+       y = "Average Price (MXN)")
+
+```
+
+e\)
+
+```{r}
+library(dplyr)
+
+# Filter data for 2016
+data_2016 <- data %>% filter(year == 2016)
+
+# Summary statistics for each state
+summary_stats_2016 <- data_2016 %>%
+  group_by(state) %>%
+  summarise(
+    mean_price = mean(price, na.rm = TRUE),
+    median_price = median(price, na.rm = TRUE),
+    sd_price = sd(price, na.rm = TRUE),
+    min_price = min(price, na.rm = TRUE),
+    max_price = max(price, na.rm = TRUE)
+  )
+print(summary_stats_2016)
+
+# Table of average price by state
+avg_price_by_state_2016 <- data_2016 %>%
+  group_by(state) %>%
+  summarise(avg_price = mean(price, na.rm = TRUE))
+
+```
+
+```{r}
+library(dplyr)
+
+# Create side-by-side boxplots
+ggplot(data_2016, aes(x = state, y = price, fill = state)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title = "Boxplots of Tortilla Prices in 2016 by State",
+       x = "State",
+       y = "Price (MXN)",
+       caption = "Source: Kaggle dataset on tortilla prices.")
+
+
+```
+
+f\)
+
+```{r}
+# Load required libraries
+library(dplyr)
+library(ggplot2)
+
+# Filter data for Nuevo León and years 2007–2024
+nuevo_leon_data <- data %>%
+  filter(state == "NuevoLeon" & year >= 2007 & year <= 2024)
+
+# Create the overlapping plot
+ggplot(nuevo_leon_data, aes(x = year, y = price, color = storeType, group = storeType)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  theme_minimal() +
+  labs(
+    title = "Tortilla Prices in Nuevo León by Store Type (2007–2024)",
+    x = "Year",
+    y = "Price (MXN)",
+    caption = "Source: Kaggle dataset on tortilla prices. Comparison of small businesses vs. large corporations."
+  )
+
+
+
+
+```
+
+The dataset used in this analysis was sourced from Kaggle: [Tortilla Prices](https://www.kaggle.com/datasets/richave/tortilla-prices-in-mexico).
